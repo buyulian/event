@@ -161,8 +161,15 @@ public class Node <T> {
      * @return
      */
     public Node<T> delay(long millisecond){
-        long start=System.currentTimeMillis();
+        Wrap<Long> wrap=new Wrap<>();
         eventFunction=(t)->{
+            Long start;
+            if(wrap.t==null){
+                start=System.currentTimeMillis();
+                wrap.t=start;
+            }else {
+                start=wrap.t;
+            }
             long now=System.currentTimeMillis();
             if(now<start+millisecond){
                 return false;
