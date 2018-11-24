@@ -12,7 +12,7 @@ public class EventLoop {
 
     public void start(){
         while (true){
-            while (eventList.size()>0){
+            if (eventList.size()>0){
                 Event event = eventList.pop();
                 boolean isFinished = true;
                 try {
@@ -21,12 +21,12 @@ public class EventLoop {
                     e.printStackTrace();
                 }
                 if(!isFinished){
-                    eventList.push(event);
+                    eventList.addLast(event);
                 }
-                eventNum=eventList.size();
-                if(isStop){
-                    return;
-                }
+            }
+            eventNum=eventList.size();
+            if(isStop){
+                return;
             }
         }
     }
