@@ -16,7 +16,9 @@ public class EventTest {
 
     @Test
     public void testEvent() {
-        EventBus.start(1, this::initEvent);
+        EventBus.init(1);
+        EventBus.sendEvent(this::initEvent);
+        EventBus.start();
 
     }
 

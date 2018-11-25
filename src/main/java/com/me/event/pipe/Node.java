@@ -20,6 +20,10 @@ public class Node <T> {
      */
     private Function<? super T,Boolean> eventFunction;
 
+    private Function<Exception,Boolean> exceptionHandler;
+
+    private boolean transmitException=true;
+
 
     /**
      * just 方法
@@ -29,7 +33,15 @@ public class Node <T> {
             return this;
         }
         Event event=()->{
-            return eventFunction.apply(t);
+            try {
+                return eventFunction.apply(t);
+            } catch (Exception e) {
+                if(exceptionHandler==null){
+                    e.printStackTrace();
+                    return true;
+                }
+                return exceptionHandler.apply(e);
+            }
         };
         EventBus.sendEvent(event);
         return this;
@@ -60,7 +72,7 @@ public class Node <T> {
      */
     public Node<T> event(Function<? super T,Boolean> eventFunction){
         this.eventFunction=eventFunction;
-        next=new Node<T>();
+        setNext(new Node<T>());
         return next;
     }
 
@@ -134,7 +146,7 @@ public class Node <T> {
             EventBus.sendEvent(event);
             return true;
         };
-        next=new Node<R>();
+        setNext(new Node<R>());
         return next;
     }
 
@@ -151,7 +163,7 @@ public class Node <T> {
             }
             return true;
         };
-        next=new Node<T>();
+        setNext(new Node<T>());
         return next;
     }
 
@@ -177,7 +189,7 @@ public class Node <T> {
             sendNextEvent(t);
             return true;
         };
-        next=new Node<T>();
+        setNext(new Node<T>());
         return next;
     }
 
@@ -193,7 +205,7 @@ public class Node <T> {
             sendNextEvent(r);
             return true;
         };
-        next=new Node<R>();
+        setNext(new Node<R>());
         return next;
     }
 
@@ -209,7 +221,7 @@ public class Node <T> {
             collection.forEach(this::sendNextEvent);
             return true;
         };
-        next=new Node<R>();
+        setNext(new Node<R>());
         return next;
     }
 
@@ -220,8 +232,29 @@ public class Node <T> {
      */
     private <R> void sendNextEvent(R r){
         if(next!=null){
+            if(next.transmitException){
+                next.setExceptionHandler(exceptionHandler);
+            }
             next.just(r);
         }
     }
 
+    public void setNext(Node next) {
+        this.next = next;
+    }
+
+    public Node<T> setExceptionHandler(Function<Exception, Boolean> exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+        transmitException=false;
+        return this;
+    }
+
+    public Node<T> transmitException(boolean transmitException) {
+        this.transmitException = transmitException;
+        return this;
+    }
+
+    public boolean isTransmitException() {
+        return transmitException;
+    }
 }

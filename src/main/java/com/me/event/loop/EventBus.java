@@ -9,15 +9,17 @@ public class EventBus {
 
     private static Map<String,Object> message=new ConcurrentHashMap<>();
 
-    public static void start(Event initEvent){
-        int availProcessors = Runtime.getRuntime().availableProcessors();
-        start(availProcessors,initEvent);
+    public static void start(){
+        eventLoopGroup.start();
     }
 
-    public static void start(int cpuNum,Event initEvent){
+    public static void init(){
+        int availProcessors = Runtime.getRuntime().availableProcessors();
+        eventLoopGroup=new EventLoopGroup(availProcessors);
+    }
+
+    public static void init(int cpuNum){
         eventLoopGroup=new EventLoopGroup(cpuNum);
-        eventLoopGroup.addEvent(initEvent);
-        eventLoopGroup.start();
     }
 
     public static void sendEvent(Event event){

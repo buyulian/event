@@ -20,11 +20,28 @@ public class EventLoop {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                //是否完成事件
                 if(!isFinished){
                     eventList.addLast(event);
                 }
             }
+
+            long interval;
             eventNum=eventList.size();
+            if(eventNum<10){
+                interval=50/(eventNum+1);
+            }else {
+                interval=0;
+            }
+            //事件运行间隔
+            if(interval>0){
+                try {
+                    Thread.sleep(interval);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             if(isStop){
                 return;
             }

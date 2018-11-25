@@ -6,6 +6,7 @@ public class EventLoopGroup {
 
     private EventLoop[] eventLoops;
 
+
     public EventLoopGroup(int eventLoopNum) {
         eventLoopThrads =new Thread[eventLoopNum-1];
         eventLoops=new EventLoop[eventLoopNum];
@@ -44,4 +45,5 @@ public class EventLoopGroup {
             eventLoop.stop();
         }
     }
+
 }
