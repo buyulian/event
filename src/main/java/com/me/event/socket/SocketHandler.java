@@ -1,5 +1,6 @@
 package com.me.event.socket;
 
+import com.me.event.http.HttpMethod;
 import com.me.event.http.HttpRequest;
 import com.me.event.http.HttpResponse;
 import com.me.event.pipe.Node;
@@ -34,7 +35,8 @@ public class SocketHandler {
 
     private static void setHandler(Wrap<Node<HttpResponse>> wrap,Node<HttpRequest> node,HttpRequest request){
         String[] path = request.getPath();
-        wrap.t=router.route(path).apply(node);
+        HttpMethod httpMethod=request.getMethod();
+        wrap.t=router.route(path,httpMethod).apply(node);
     }
 
 }
