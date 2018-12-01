@@ -72,8 +72,9 @@ public class Node <T> {
      */
     public Node<T> event(Function<? super T,Boolean> eventFunction){
         this.eventFunction=eventFunction;
-        setNext(new Node<T>());
-        return next;
+        Node<T> node=new Node<>();
+        setNext(node);
+        return node;
     }
 
     /**
@@ -130,14 +131,14 @@ public class Node <T> {
                 Wrap<R> wrap=new Wrap<>();
                 scheduler.execute(()->{
                     R r = mapper.apply(t);
-                    wrap.t=r;
+                    wrap.data =r;
                 });
 
                 Event callEvent=()->{
-                    if(wrap.t==null){
+                    if(wrap.data ==null){
                         return false;
                     }
-                    sendNextEvent(wrap.t);
+                    sendNextEvent(wrap.data);
                     return true;
                 };
                 EventBus.sendEvent(callEvent);
@@ -146,8 +147,9 @@ public class Node <T> {
             EventBus.sendEvent(event);
             return true;
         };
-        setNext(new Node<R>());
-        return next;
+        Node<R> node=new Node<>();
+        setNext(node);
+        return node;
     }
 
     /**
@@ -163,8 +165,9 @@ public class Node <T> {
             }
             return true;
         };
-        setNext(new Node<T>());
-        return next;
+        Node<T> node=new Node<>();
+        setNext(node);
+        return node;
     }
 
     /**
@@ -176,11 +179,11 @@ public class Node <T> {
         Wrap<Long> wrap=new Wrap<>();
         eventFunction=(t)->{
             Long start;
-            if(wrap.t==null){
+            if(wrap.data ==null){
                 start=System.currentTimeMillis();
-                wrap.t=start;
+                wrap.data =start;
             }else {
-                start=wrap.t;
+                start=wrap.data;
             }
             long now=System.currentTimeMillis();
             if(now<start+millisecond){
@@ -189,8 +192,9 @@ public class Node <T> {
             sendNextEvent(t);
             return true;
         };
-        setNext(new Node<T>());
-        return next;
+        Node<T> node=new Node<>();
+        setNext(node);
+        return node;
     }
 
     /**
@@ -205,8 +209,43 @@ public class Node <T> {
             sendNextEvent(r);
             return true;
         };
-        setNext(new Node<R>());
-        return next;
+        Node<R> node=new Node<>();
+        setNext(node);
+        return node;
+    }
+
+    /**
+     * execute，然后返回自身
+     * @param consumer
+     * @return
+     */
+    public Node<T> execute(Consumer<T> consumer){
+        eventFunction=(t)->{
+            consumer.accept(t);
+            sendNextEvent(t);
+            return true;
+        };
+        Node<T> node=new Node<>();
+        setNext(node);
+        return node;
+    }
+
+    /**
+     * execute，然后返回自身
+     * @param looper
+     * @return
+     */
+    public Node<T> loop(Function<? super T,Boolean> looper){
+        eventFunction=(t)->{
+            Boolean finished = looper.apply(t);
+            if(finished){
+                sendNextEvent(t);
+            }
+            return finished;
+        };
+        Node<T> node=new Node<>();
+        setNext(node);
+        return node;
     }
 
     /**
@@ -221,8 +260,9 @@ public class Node <T> {
             collection.forEach(this::sendNextEvent);
             return true;
         };
-        setNext(new Node<R>());
-        return next;
+        Node<R> node=new Node<>();
+        setNext(node);
+        return node;
     }
 
     /**
@@ -230,6 +270,7 @@ public class Node <T> {
      * @param r
      * @param <R>
      */
+    @SuppressWarnings("unchecked")
     private <R> void sendNextEvent(R r){
         if(next!=null){
             if(next.transmitException){

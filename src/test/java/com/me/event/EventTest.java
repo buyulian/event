@@ -27,7 +27,7 @@ public class EventTest {
         Node<Integer> node2 = new Node<>();
 
         Wrap<Integer> wrap=new Wrap<>();
-        wrap.t=0;
+        wrap.data =0;
 
         node.event(s->{
             String key="test-node-delay";
@@ -44,7 +44,7 @@ public class EventTest {
             if(start+delay>now){
                 return false;
             }else {
-                node2.just(wrap.t++);
+                node2.just(wrap.data++);
 
                 EventBus.setMessage(key,now);
                 return false;

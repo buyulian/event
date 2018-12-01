@@ -24,8 +24,8 @@ public class SocketHandler {
         Wrap<Node<HttpResponse>> wrap=new Wrap<>();
         request.map(r->{
             setHandler(wrap,node,r);
-            wrap.t.map(s->s);
-            wrap.t.setNext(responseNode);
+            wrap.data.map(s->s);
+            wrap.data.setNext(responseNode);
             request.setNext(node);
             return r;
         });
@@ -36,7 +36,7 @@ public class SocketHandler {
     private static void setHandler(Wrap<Node<HttpResponse>> wrap,Node<HttpRequest> node,HttpRequest request){
         String[] path = request.getPath();
         HttpMethod httpMethod=request.getMethod();
-        wrap.t=router.route(path,httpMethod).apply(node);
+        wrap.data =router.route(path,httpMethod).apply(node);
     }
 
 }
