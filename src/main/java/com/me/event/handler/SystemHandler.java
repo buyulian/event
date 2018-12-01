@@ -1,5 +1,6 @@
-package com.me.app.handler;
+package com.me.event.handler;
 
+import com.me.event.common.Constans;
 import com.me.event.http.HttpCode;
 import com.me.event.http.HttpRequest;
 import com.me.event.http.HttpResponse;
@@ -14,10 +15,12 @@ import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SystemHandler {
 
-    private static final Logger LOGGER= LoggerFactory.getLogger(SystemHandler.class);
+    private static Logger logger= LoggerFactory.getLogger(SystemHandler.class);
 
     public Node<HttpResponse> notFound(Node<HttpRequest> request){
         return request.map(httpRequest->{
@@ -32,10 +35,10 @@ public class SystemHandler {
         Wrap<String> wrap=new Wrap<>();
         return request.execute(httpRequest->{
             String[] paths = httpRequest.getPath();
-            String filePath=paths[1];
+            String filePath= Constans.STATIC_PATH+paths[1];
+            AsynchronousFileChannel fileChannel=null;
             try {
-                AsynchronousFileChannel fileChannel =
-                        AsynchronousFileChannel.open(Paths.get(filePath), StandardOpenOption.READ);
+                fileChannel = AsynchronousFileChannel.open(Paths.get(filePath), StandardOpenOption.READ);
                 ByteBuffer buffer = ByteBuffer.allocate(1024);
                 long position = 0;
                 fileChannel.read(buffer,position,buffer,new CompletionHandler<Integer, ByteBuffer>() {
@@ -52,13 +55,22 @@ public class SystemHandler {
 
                     @Override
                     public void failed(Throwable exc, ByteBuffer attachment) {
-                        LOGGER.error("Read failed",exc);
+                        logger.error("Read failed",exc);
+                        wrap.code=1;
                         exc.printStackTrace();
                     }
                 });
             } catch (IOException e) {
-                LOGGER.error("static file read io exception");
-                return ;
+                logger.error("static file read io exception");
+                throw new RuntimeException(e);
+            }finally {
+                if(fileChannel!=null){
+                    try {
+                        fileChannel.close();
+                    } catch (IOException e) {
+                        logger.error("file channel close exception");
+                    }
+                }
             }
             return ;
         }).loop(httpRequest -> {
@@ -74,6 +86,10 @@ public class SystemHandler {
                 return httpResponse;
             }
             httpResponse.setCode(HttpCode.OK);
+
+            Map<String, String> header = new HashMap<>();
+            header.put("Content-Type","text/html; charset=UTF-8");
+            httpResponse.setHeader(header);
             httpResponse.setBody(wrap.data);
             return httpResponse;
         });
