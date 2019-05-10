@@ -1,4 +1,4 @@
-package com.me.event.http;
+package com.me.http.http;
 
 import java.util.Map;
 

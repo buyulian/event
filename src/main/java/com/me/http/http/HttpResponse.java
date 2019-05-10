@@ -1,4 +1,4 @@
-package com.me.event.http;
+package com.me.http.http;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class HttpResponse {
 //        header.put("content-encoding","gzip");
         header.put("content-type","text/plain;charset=UTF-8");
         header.put("Accept-Ranges","bytes");
-        header.put("Server","Microsoft-IIS/7.5");
+        header.put("ConnectProcessor","Microsoft-IIS/7.5");
     }
 
     public String getBody() {

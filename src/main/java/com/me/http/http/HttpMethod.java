@@ -1,4 +1,4 @@
-package com.me.event.http;
+package com.me.http.http;
 
 public enum HttpMethod {
     GET,POST,PUT,DELETE;

@@ -1,12 +1,12 @@
-package com.me.event.socket;
+package com.me.http.socket;
 
-import com.me.event.http.HttpMethod;
-import com.me.event.http.HttpRequest;
-import com.me.event.http.HttpResponse;
+import com.me.http.http.HttpMethod;
+import com.me.http.http.HttpRequest;
+import com.me.http.http.HttpResponse;
 import com.me.event.pipe.Node;
 import com.me.event.pipe.Wrap;
 
-public class SocketHandler {
+public class HttpLinkRouterEvent {
 
     private static Router router;
 
@@ -15,7 +15,7 @@ public class SocketHandler {
     }
 
     public static void setRouter(Router router) {
-        SocketHandler.router = router;
+        HttpLinkRouterEvent.router = router;
     }
 
     private static Node<HttpResponse> link(Node<HttpRequest> request) {

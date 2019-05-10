@@ -1,7 +1,7 @@
 package com.me.app.handler;
 
-import com.me.event.http.HttpRequest;
-import com.me.event.http.HttpResponse;
+import com.me.http.http.HttpRequest;
+import com.me.http.http.HttpResponse;
 import com.me.event.pipe.Node;
 
 public class HelloHandler {

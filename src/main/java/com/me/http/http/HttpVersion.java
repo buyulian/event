@@ -1,4 +1,4 @@
-package com.me.event.http;
+package com.me.http.http;
 
 public enum HttpVersion {
     V11("1.1")
